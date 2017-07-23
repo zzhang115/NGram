@@ -14,10 +14,13 @@ public class NGramLibraryBuilder
 {
     public static class NGramMapper extends Mapper<LongWritable, Text, Text, IntWritable>
     {
+        private int numGram;
+        //setup function only be called one time, just to setup related data
         @Override
         protected void setup(Context context) throws IOException, InterruptedException
         {
-
+            Configuration conf = context.getConfiguration();
+            numGram = conf.getInt("numGram", 5);// 5 is default value, if get value is null
         }
 
         @Override
@@ -29,8 +32,6 @@ public class NGramLibraryBuilder
             love bigdata -> 1
             I love big -> 1
             */
-            Configuration conf = context.getConfiguration();
-            int numGram = conf.getInt("numGram", 5);// 5 is default value, if get value is null
             String line = value.toString().trim().toLowerCase().replaceAll("[^a-z]", " ");
             String[] words = line.split("\\s+");
             if(words.length < 2)
