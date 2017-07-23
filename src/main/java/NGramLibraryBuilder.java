@@ -42,7 +42,12 @@ public class NGramLibraryBuilder
             {
                 stringBuilder = new StringBuilder();
                 stringBuilder.append(words[i]);
-
+                for(int j = 1; j < numGram && (i + j) < words.length; j++)
+                {
+                    stringBuilder.append(" ");
+                    stringBuilder.append(words[i + j]);
+                    context.write(new Text(stringBuilder.toString()), new IntWritable(1));
+                }
             }
         }
     }
@@ -51,7 +56,12 @@ public class NGramLibraryBuilder
         @Override
         protected void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
         {
-            super.reduce(key, values, context);
+            int sum = 0;
+            for(IntWritable value : values)
+            {
+                sum += value.get();
+            }
+            context.write(key, new IntWritable(sum));
         }
     }
 
