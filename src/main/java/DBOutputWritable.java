@@ -18,12 +18,14 @@ public class DBOutputWritable implements DBWritable
         this.followingPhrase = followingPhrase;
         this.count = count;
     }
+
     public void readFields(ResultSet args) throws SQLException
     {
         this.startingPhrase = args.getString(1);
         this.followingPhrase = args.getString(2);
         this.count = args.getInt(3);
     }
+
     public void write(PreparedStatement args) throws SQLException
     {
         args.setString(1, startingPhrase);
