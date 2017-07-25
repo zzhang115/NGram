@@ -1,9 +1,11 @@
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.lib.db.DBConfiguration;
 import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.lib.db.DBOutputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import java.io.IOException;
@@ -55,6 +57,26 @@ public class Driver
         configuration2.set("n", topK);
 
         DBConfiguration.configureDB(configuration2, "com.mysql.jdbc.Driver", "jdbc:mysql://ip_address:port/test", "root", "password");
+        Job job2 = Job.getInstance(configuration2);
+        job2.setJobName("Model");
+        job2.setJarByClass(Driver.class);
 
+//        job2.addArchiveToClassPath(new Path("path_to_ur_connector"));
+        job2.setMapperClass(LanguageModel.Map.class);
+        job2.setReducerClass(LanguageModel.Reduce.class);
+
+        job2.setMapOutputKeyClass(Text.class);
+        job2.setMapOutputValueClass(Text.class);
+        job2.setOutputKeyClass(DBOutputWritable.class);
+        job2.setOutputValueClass(NullWritable.class);
+
+        job2.setInputFormatClass(TextInputFormat.class);
+        job2.setOutputFormatClass(DBOutputFormat.class);
+
+        DBOutputFormat.setOutput(job2, "output", new String[] {"starting_phrase", "following_word", "count"});
+
+        TextInputFormat.setInputPaths(job2, args[1]);
+        TextOutputFormat.setOutputPath(job1, new Path(outputDir));
+        job2.waitForCompletion(true);
     }
 }
