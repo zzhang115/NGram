@@ -6,6 +6,7 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 
 import java.io.IOException;
+import java.util.*;
 
 /**
  * Created by zzc on 7/24/17.
@@ -22,7 +23,6 @@ public class LanguageModel
         {
             Configuration configuration = context.getConfiguration();
             threshold = configuration.getInt("threshold", 20);
-
         }
 
         @Override
@@ -53,6 +53,49 @@ public class LanguageModel
     }
     public static class Reduce extends Reducer<Text, Text, DBOutputWritable, NullWritable>
     {
+        private int threshold;
+        @Override
+        protected void setup(Context context) throws IOException, InterruptedException
+        {
+            Configuration configuration = context.getConfiguration();
+            threshold = configuration.getInt("threshold", 20);
+        }
 
+        @Override
+        protected void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException
+        {
+            // key = I love big
+            // value = <data=10,girl=100,boy=200...>
+            TreeMap<Integer, List<String>> tm = new TreeMap<Integer, List<String>>(Collections.<Integer>reverseOrder());
+            //<10, <data, baby...>, <100, <apple, htc...>>
+            for(Text val : values)
+            {
+                String value = val.toString().trim();
+                String word = value.split("=")[0].trim();
+                int count = Integer.parseInt(value.split("=")[1].trim());
+                if(tm.containsKey(count))
+                {
+                    tm.get(count).add(word);
+                }
+                else
+                {
+                    List<String> list = new ArrayList<String>();
+                    list.add(word);
+                    tm.put(count, list);
+                }
+            }
+            Iterator<Integer> iterator = tm.keySet().iterator();
+            for(int j = 0; iterator.hasNext() && j < threshold;)
+            {
+                int keyCount = iterator.next();
+                List<String> words = tm.get(keyCount);
+                for(int i = 0; i < words.size() && j < threshold; i++)
+                {
+                    context.write(new DBOutputWritable(key.toString(), words.get(i), keyCount), NullWritable.get());
+                    j++;
+                }
+            }
+
+        }
     }
 }
