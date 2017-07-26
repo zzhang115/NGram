@@ -19,7 +19,7 @@ public class NGramLibraryBuilder
         protected void setup(Context context) throws IOException, InterruptedException
         {
             Configuration conf = context.getConfiguration();
-            numGram = conf.getInt("numGram", 5);// 5 is default value, if get value is null
+            numGram = conf.getInt("nGram", 5);// 5 is default value, if get value is null
         }
 
         @Override
@@ -32,6 +32,7 @@ public class NGramLibraryBuilder
             I love big -> 1
             */
             String line = value.toString().trim().toLowerCase().replaceAll("[^a-z]", " ");
+//            System.out.println("line: " + line);
             String[] words = line.split("\\s+");
             if(words.length < 2)
             {
@@ -48,6 +49,7 @@ public class NGramLibraryBuilder
                     stringBuilder.append(words[i + j]);
                     context.write(new Text(stringBuilder.toString()), new IntWritable(1));
                 }
+//                System.out.println("buf: " + stringBuilder.toString());
             }
         }
     }
@@ -56,9 +58,11 @@ public class NGramLibraryBuilder
         @Override
         protected void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
         {
+//            System.out.println("key: "+key);
             int sum = 0;
             for(IntWritable value : values)
             {
+//                System.out.println("value: "+value);
                 sum += value.get();
             }
             context.write(key, new IntWritable(sum));
