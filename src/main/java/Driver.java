@@ -38,7 +38,7 @@ public class Driver
         configuration1.set("textinputformat.record.delimiter", ".");
         configuration1.set("nGram", nGrams);
 
-        Job job1 = Job.getInstance();
+        Job job1 = Job.getInstance(configuration1);
         job1.setJobName("NGram");
         job1.setJarByClass(Driver.class);
 
@@ -61,6 +61,7 @@ public class Driver
         configuration2.set("threshold", threshold);
         configuration2.set("n", topK);
 
+        // dburl: mysql ip address and database name, username, password
         DBConfiguration.configureDB(configuration2, "com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/auto_complete", "root", "238604");
         Job job2 = Job.getInstance(configuration2);
         job2.setJobName("Model");
@@ -78,10 +79,10 @@ public class Driver
         job2.setInputFormatClass(TextInputFormat.class);
         job2.setOutputFormatClass(DBOutputFormat.class);
 
-        DBOutputFormat.setOutput(job2, "word_count", new String[] {"starting_phrase", "following_word", "count"});
+        // tableName used to insert data, string[] represents column name in database, must keep same with db
+        DBOutputFormat.setOutput(job2, "word_count2", new String[] {"starting_phrase", "following_word", "count"});
 
-        TextInputFormat.setInputPaths(job2, args[1]);
-        TextOutputFormat.setOutputPath(job1, new Path(outputDir));
+        TextInputFormat.setInputPaths(job2, outputDir);
         job2.waitForCompletion(true);
     }
 }
