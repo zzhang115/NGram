@@ -1,6 +1,8 @@
+import java.io.File;
 import java.io.IOException;
 import java.util.StringTokenizer;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
@@ -45,6 +47,12 @@ public class WordCount {
     }
 
     public static void main(String[] args) throws Exception {
+        File file = new File(args[1]);
+        if(file.exists())
+        {
+            System.out.println("Output directory already exits, delete it.");
+            FileUtils.deleteDirectory(new File(args[1]));
+        }
         Configuration conf = new Configuration();
         Job job = new Job(conf, "word count");
         job.setJarByClass(WordCount.class);

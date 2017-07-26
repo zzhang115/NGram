@@ -56,7 +56,7 @@ public class Driver
         configuration2.set("threshold", threshold);
         configuration2.set("n", topK);
 
-        DBConfiguration.configureDB(configuration2, "com.mysql.jdbc.Driver", "jdbc:mysql://ip_address:port/test", "root", "password");
+        DBConfiguration.configureDB(configuration2, "com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/test", "root", "238604");
         Job job2 = Job.getInstance(configuration2);
         job2.setJobName("Model");
         job2.setJarByClass(Driver.class);
