@@ -51,7 +51,7 @@ public class WordCount {
         if(file.exists())
         {
             System.out.println("Output directory already exits, delete it.");
-            FileUtils.deleteDirectory(new File(args[1]));
+            FileUtils.deleteDirectory(file);
         }
         Configuration conf = new Configuration();
         Job job = new Job(conf, "word count");
