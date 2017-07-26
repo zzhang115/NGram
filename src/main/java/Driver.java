@@ -66,8 +66,7 @@ public class Driver
         job2.setJobName("Model");
         job2.setJarByClass(Driver.class);
 
-//        job2.addArchiveToClassPath(new Path("path_to_ur_connector"));
-        FileInputFormat.addInputPath(job2, new Path("/home/zzc/.m2/repository/mysql/mysql-connector-java/5.1.39/mysql-connector-java-5.1.39.jar"));
+        FileInputFormat.addInputPath(job2, new Path("mysql-connector-java-5.1.39.jar"));
         job2.setMapperClass(LanguageModel.Map.class);
         job2.setReducerClass(LanguageModel.Reduce.class);
 

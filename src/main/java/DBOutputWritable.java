@@ -1,5 +1,4 @@
-import org.apache.hadoop.mapred.lib.db.DBWritable;
-
+import org.apache.hadoop.mapreduce.lib.db.DBWritable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
