@@ -25,10 +25,10 @@ public class DBOutputWritable implements DBWritable
         this.count = args.getInt(3);
     }
 
-    public void write(PreparedStatement args) throws SQLException
+    public void write(PreparedStatement stats) throws SQLException
     {
-        args.setString(1, startingPhrase);
-        args.setString(2, followingPhrase);
-        args.setInt(3, count);
+        stats.setString(1, startingPhrase);
+        stats.setString(2, followingPhrase);
+        stats.setInt(3, count);
     }
 }

@@ -40,6 +40,7 @@ public class LanguageModel
             {
                 return;
             }
+//            System.out.println("line: "+line);
             StringBuilder stringBuilder = new StringBuilder();
             for(int i = 0; i < words.length - 1; i++)
             {
@@ -48,9 +49,11 @@ public class LanguageModel
             }
             String outputKey = stringBuilder.toString().trim();
             String outputValue = words[words.length - 1] + "=" + count;
+//            System.out.println("key: "+outputKey + " value: "+outputValue);
             context.write(new Text(outputKey), new Text(outputValue));
         }
     }
+
     public static class Reduce extends Reducer<Text, Text, DBOutputWritable, NullWritable>
     {
         private int threshold;
@@ -73,6 +76,7 @@ public class LanguageModel
                 String value = val.toString().trim();
                 String word = value.split("=")[0].trim();
                 int count = Integer.parseInt(value.split("=")[1].trim());
+                System.out.println("##"+value);
                 if(tm.containsKey(count))
                 {
                     tm.get(count).add(word);
@@ -92,6 +96,7 @@ public class LanguageModel
                 for(int i = 0; i < words.size() && j < threshold; i++)
                 {
                     context.write(new DBOutputWritable(key.toString(), words.get(i), keyCount), NullWritable.get());
+                    System.out.println("key: "+key.toString()+" value: "+words.get(i)+" count: "+keyCount);
                     j++;
                 }
             }
