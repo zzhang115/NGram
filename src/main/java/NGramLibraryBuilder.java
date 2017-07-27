@@ -49,7 +49,7 @@ public class NGramLibraryBuilder
                     stringBuilder.append(words[i + j]);
                     context.write(new Text(stringBuilder.toString()), new IntWritable(1));
                 }
-//                System.out.println("buf: " + stringBuilder.toString());
+                System.out.println("buf: " + stringBuilder.toString());
             }
         }
     }
@@ -58,15 +58,14 @@ public class NGramLibraryBuilder
         @Override
         protected void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
         {
-//            System.out.println("key: "+key);
+            System.out.println("key: "+key);
             int sum = 0;
             for(IntWritable value : values)
             {
-//                System.out.println("value: "+value);
+                System.out.println("value: "+value);
                 sum += value.get();
             }
             context.write(key, new IntWritable(sum));
         }
     }
-
 }

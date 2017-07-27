@@ -40,7 +40,7 @@ public class LanguageModel
             {
                 return;
             }
-//            System.out.println("line: "+line);
+            System.out.println("line: "+line);
             StringBuilder stringBuilder = new StringBuilder();
             for(int i = 0; i < words.length - 1; i++)
             {
@@ -49,7 +49,7 @@ public class LanguageModel
             }
             String outputKey = stringBuilder.toString().trim();
             String outputValue = words[words.length - 1] + "=" + count;
-//            System.out.println("key: "+outputKey + " value: "+outputValue);
+            System.out.println("key: "+outputKey + " value: "+outputValue);
             context.write(new Text(outputKey), new Text(outputValue));
         }
     }
@@ -76,7 +76,7 @@ public class LanguageModel
                 String value = val.toString().trim();
                 String word = value.split("=")[0].trim();
                 int count = Integer.parseInt(value.split("=")[1].trim());
-                System.out.println("##"+value);
+                System.out.println("###"+value);
                 if(tm.containsKey(count))
                 {
                     tm.get(count).add(word);
@@ -100,7 +100,6 @@ public class LanguageModel
                     j++;
                 }
             }
-
         }
     }
 }
