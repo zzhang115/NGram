@@ -49,7 +49,7 @@ public class Driver
         job1.setOutputValueClass(IntWritable.class);
 
         job1.setInputFormatClass(TextInputFormat.class);
-        job1.setOutputFormatClass(org.apache.hadoop.mapreduce.lib.output.TextOutputFormat.class);
+        job1.setOutputFormatClass(TextOutputFormat.class);
 
         TextInputFormat.setInputPaths(job1, new Path(inputDir));
         TextOutputFormat.setOutputPath(job1, new Path(outputDir));
@@ -59,7 +59,7 @@ public class Driver
         // job2
         Configuration configuration2 = new Configuration();
         configuration2.set("threshold", threshold);
-        configuration2.set("n", topK);
+        configuration2.set("topK", topK);
 
         // dburl: mysql ip address and database name, username, password
         DBConfiguration.configureDB(configuration2, "com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/auto_complete", "root", "238604");

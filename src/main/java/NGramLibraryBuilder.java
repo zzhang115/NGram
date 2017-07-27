@@ -31,8 +31,8 @@ public class NGramLibraryBuilder
             love bigdata -> 1
             I love big -> 1
             */
+            System.out.println("line:"+value.toString());
             String line = value.toString().trim().toLowerCase().replaceAll("[^a-z]", " ");
-//            System.out.println("line: " + line);
             String[] words = line.split("\\s+");
             if(words.length < 2)
             {
@@ -49,20 +49,21 @@ public class NGramLibraryBuilder
                     stringBuilder.append(words[i + j]);
                     context.write(new Text(stringBuilder.toString()), new IntWritable(1));
                 }
-                System.out.println("buf: " + stringBuilder.toString());
+//                System.out.println("buf: " + stringBuilder.toString());
             }
         }
     }
+
     public static class NGramReducer extends Reducer<Text, IntWritable, Text, IntWritable>
     {
         @Override
         protected void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
         {
-            System.out.println("key: "+key);
+//            System.out.println("key: "+key);
             int sum = 0;
             for(IntWritable value : values)
             {
-                System.out.println("value: "+value);
+//                System.out.println("value: "+value);
                 sum += value.get();
             }
             context.write(key, new IntWritable(sum));

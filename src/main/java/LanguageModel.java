@@ -22,12 +22,13 @@ public class LanguageModel
         protected void setup(Context context) throws IOException, InterruptedException
         {
             Configuration configuration = context.getConfiguration();
-            threshold = configuration.getInt("threshold", 20);
+            threshold = configuration.getInt("topK", 20);
         }
 
         @Override
         protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException
         {
+//            System.out.println("---key: "+key+" value: "+value);
             String line = value.toString().trim();
             String[] wordsPlusCount = line.split("\t");
             if(wordsPlusCount.length < 2)
@@ -40,7 +41,6 @@ public class LanguageModel
             {
                 return;
             }
-            System.out.println("line: "+line);
             StringBuilder stringBuilder = new StringBuilder();
             for(int i = 0; i < words.length - 1; i++)
             {
@@ -49,19 +49,19 @@ public class LanguageModel
             }
             String outputKey = stringBuilder.toString().trim();
             String outputValue = words[words.length - 1] + "=" + count;
-            System.out.println("key: "+outputKey + " value: "+outputValue);
+//            System.out.println("key: "+outputKey + " value: "+outputValue);
             context.write(new Text(outputKey), new Text(outputValue));
         }
     }
 
     public static class Reduce extends Reducer<Text, Text, DBOutputWritable, NullWritable>
     {
-        private int threshold;
+        private int topK;
         @Override
         protected void setup(Context context) throws IOException, InterruptedException
         {
             Configuration configuration = context.getConfiguration();
-            threshold = configuration.getInt("threshold", 20);
+            topK = configuration.getInt("topK", 5);
         }
 
         @Override
@@ -76,7 +76,7 @@ public class LanguageModel
                 String value = val.toString().trim();
                 String word = value.split("=")[0].trim();
                 int count = Integer.parseInt(value.split("=")[1].trim());
-                System.out.println("###"+value);
+//                System.out.println("###"+value);
                 if(tm.containsKey(count))
                 {
                     tm.get(count).add(word);
@@ -89,14 +89,14 @@ public class LanguageModel
                 }
             }
             Iterator<Integer> iterator = tm.keySet().iterator();
-            for(int j = 0; iterator.hasNext() && j < threshold;)
+            for(int j = 0; iterator.hasNext() && j < topK;)
             {
                 int keyCount = iterator.next();
                 List<String> words = tm.get(keyCount);
-                for(int i = 0; i < words.size() && j < threshold; i++)
+                for(int i = 0; i < words.size() && j < topK; i++)
                 {
                     context.write(new DBOutputWritable(key.toString(), words.get(i), keyCount), NullWritable.get());
-                    System.out.println("key: "+key.toString()+" value: "+words.get(i)+" count: "+keyCount);
+//                    System.out.println("key: "+key.toString()+" value: "+words.get(i)+" count: "+keyCount);
                     j++;
                 }
             }
